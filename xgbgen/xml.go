@@ -46,7 +46,7 @@ func (imports XMLImports) Eval() {
 		imp.xml = &XML{}
 		err = xml.Unmarshal(xmlBytes, imp.xml)
 		if err != nil {
-			log.Fatal("Could not parse X protocol description for import "+
+			log.Fatalf("Could not parse X protocol description for import "+
 				"'%s' because: %s", imp.Name, err)
 		}
 
