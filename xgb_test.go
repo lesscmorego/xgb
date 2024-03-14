@@ -171,8 +171,8 @@ func TestConnOnNonBlockingDummyXServer(t *testing.T) {
 			[]func(*Conn) error{
 				func(c *Conn) error {
 					c.conn.Close()
-					if ev, err := c.WaitForEvent(); ev != nil || err != nil {
-						return fmt.Errorf("WaitForEvent() = (%v, %v), want (nil, nil)", ev, err)
+					if ev, err := c.WaitForEvent(); ev != nil || err == nil {
+						return fmt.Errorf("WaitForEvent() = (%v, %v), want (nil, err)", ev, err)
 					}
 					return nil
 				},

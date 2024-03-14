@@ -87,6 +87,7 @@ func NewConn() (*Conn, error) {
 // If 'display' is empty it will be taken from os.Getenv("DISPLAY").
 //
 // Examples:
+//
 //	NewConn(":1") -> net.Dial("unix", "", "/tmp/.X11-unix/X1")
 //	NewConn("/tmp/launch-12/:0") -> net.Dial("unix", "", "/tmp/launch-12/:0")
 //	NewConn("hostname:2.1") -> net.Dial("tcp", "", "hostname:6002")
@@ -564,6 +565,19 @@ func (c *Conn) readResponses() {
 	}
 }
 
+// This is to wrap an error in an Error
+type wrappedError struct {
+	error
+}
+
+func (wrappedError) SequenceId() uint16 {
+	return 0
+}
+
+func (wrappedError) BadId() uint32 {
+	return 0
+}
+
 // processEventOrError takes an eventOrError, type switches on it,
 // and returns it in Go idiomatic style.
 func processEventOrError(everr eventOrError) (Event, Error) {
@@ -574,6 +588,7 @@ func processEventOrError(everr eventOrError) (Event, Error) {
 		return nil, ee
 	case error:
 		// c.conn read error
+		return nil, wrappedError{ee}
 	case nil:
 		// c.eventChan is closed
 	default:
